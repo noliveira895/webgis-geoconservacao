@@ -6,17 +6,20 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-  <!-- CSS -->
+  <!-- CSS do projeto -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- ===================== -->
+<!-- SIDEBAR ESQUERDA -->
+<!-- ===================== -->
 <div id="sidebar">
+
   <div class="logo">
     <h2>GeoExplora</h2>
     <p>WebGIS Geodiversidade</p>
@@ -30,9 +33,20 @@
   <div class="footer">
     <p>PNMNI • Geoconservação</p>
   </div>
+
 </div>
 
+<!-- ===================== -->
+<!-- PAINEL LATERAL DIREITO -->
+<!-- ===================== -->
+<div id="infoPanel" class="hidden">
+  <button id="closePanel">✖</button>
+  <div id="panelContent"></div>
+</div>
+
+<!-- ===================== -->
 <!-- MAPA -->
+<!-- ===================== -->
 <div id="map"></div>
 
 <!-- Leaflet JS -->
