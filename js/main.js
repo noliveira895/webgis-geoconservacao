@@ -82,7 +82,7 @@ fetch('data/apa.geojson')
 // -----------------------
 // Trilha das Águas (roxa)
 // -----------------------
-fetch('data/aguas.geojson')
+fetch('data/trilhas.geojson')
 .then(res => res.json())
 .then(data => {
   camadas["Trilha das Águas"] = L.geoJSON(data, {
