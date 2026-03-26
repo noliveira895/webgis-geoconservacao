@@ -9,12 +9,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 
 // =======================
-// POPUP COM IMAGEM LOCAL AUTOMÁTICA
+// POPUP COM IMAGEM + DADOS
 // =======================
 function popupContent(feature, latlng) {
   let props = feature.properties;
 
-  // Nome da imagem automático
   let nomeImagem = "";
 
   if (props.nome) {
@@ -26,14 +25,12 @@ function popupContent(feature, latlng) {
 
   let caminhoImagem = `images/${nomeImagem}.jpg`;
 
-  // Coordenadas formatadas
   let coords = latlng
     ? `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`
     : "N/A";
 
   return `
     <div style="width:240px">
-
       <h4 style="margin:0">${props.nome || "Ponto"}</h4>
 
       <img src="${caminhoImagem}" 
@@ -49,7 +46,6 @@ function popupContent(feature, latlng) {
         <b>🪨 Geossítio:</b> ${props.geossit || "N/A"}<br>
         <b>📊 Valores:</b> ${props.valores || "N/A"}
       </p>
-
     </div>
   `;
 }
@@ -60,42 +56,46 @@ function popupContent(feature, latlng) {
 var camadas = {};
 
 // -----------------------
-// PNMNI (Parque - destaque)
+// PNMNI
 // -----------------------
 fetch('data/pnmni_delimitacao.geojson')
 .then(res => res.json())
 .then(data => {
   camadas["Parque (PNMNI)"] = L.geoJSON(data, {
-  style: {
-    color: "#2e7d32",
-    weight: 2,
-    fillColor: "#66bb6a",
-    fillOpacity: 0.3
-  },
-  interactive: false  // 🔥 AQUI
-}).addTo(map);
+    style: {
+      color: "#2e7d32",
+      weight: 2,
+      fillColor: "#66bb6a",
+      fillOpacity: 0.3
+    },
+    interactive: false
+  }).addTo(map);
+
+  camadas["Parque (PNMNI)"].bringToBack();
 
   map.fitBounds(camadas["Parque (PNMNI)"].getBounds());
 });
 
 // -----------------------
-// APA (quase invisível)
+// APA
 // -----------------------
 fetch('data/apa.geojson')
 .then(res => res.json())
 .then(data => {
   camadas["APA"] = L.geoJSON(data, {
-  style: {
-    color: "#fbc02d",
-    weight: 1,
-    fillOpacity: 0.02
-  },
-  interactive: false  // 🔥 AQUI
-}).addTo(map);
+    style: {
+      color: "#fbc02d",
+      weight: 1,
+      fillOpacity: 0.02
+    },
+    interactive: false
+  }).addTo(map);
+
+  camadas["APA"].bringToBack();
 });
 
 // -----------------------
-// Trilha das Águas (roxa)
+// Trilhas (Águas)
 // -----------------------
 fetch('data/trilhas.geojson')
 .then(res => res.json())
@@ -107,12 +107,16 @@ fetch('data/trilhas.geojson')
       dashArray: "10,6",
       opacity: 0.9
     },
-    onEachFeature: (f, l) => l.bindPopup(popupContent(f))
+    onEachFeature: (f, l) => {
+      l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
+    }
   }).addTo(map);
+
+  camadas["Trilha das Águas"].bringToFront();
 });
 
 // -----------------------
-// Trilha Contenda (amarela)
+// Trilha Contenda
 // -----------------------
 fetch('data/contenda.geojson')
 .then(res => res.json())
@@ -124,12 +128,16 @@ fetch('data/contenda.geojson')
       dashArray: "10,6",
       opacity: 0.9
     },
-    onEachFeature: (f, l) => l.bindPopup(popupContent(f))
+    onEachFeature: (f, l) => {
+      l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
+    }
   }).addTo(map);
+
+  camadas["Trilha Contenda"].bringToFront();
 });
 
 // -----------------------
-// Pontos de Interesse
+// Pontos
 // -----------------------
 fetch('data/pontos.geojson')
 .then(res => res.json())
@@ -144,12 +152,16 @@ fetch('data/pontos.geojson')
         fillOpacity: 0.9
       });
     },
-    onEachFeature: (f, l) => l.bindPopup(popupContent(f))
+    onEachFeature: (f, l) => {
+      l.bindPopup(() => popupContent(f, l.getLatLng()));
+    }
   }).addTo(map);
+
+  camadas["Pontos de Interesse"].bringToFront();
 });
 
 // =======================
-// CONTROLE DE CAMADAS NA SIDEBAR
+// CONTROLE DE CAMADAS (ROBUSTO)
 // =======================
 setTimeout(() => {
   var control = L.control.layers(null, camadas, {
