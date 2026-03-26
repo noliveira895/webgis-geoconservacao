@@ -109,9 +109,13 @@ fetch('data/trilhas.geojson')
       dashArray: "10,6",
       opacity: 0.9
     },
-    onEachFeature: (f, l) => {
-      l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
-    }
+  onEachFeature: (f, l) => {
+  l.bindPopup(`
+    <div style="width:200px">
+      <h4 style="margin:0">Trilha (Caminho das Águas)</h4>
+    </div>
+  `);
+}
   }).addTo(map);
 
   camadas["Trilha das Águas"].bringToFront();
