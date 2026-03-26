@@ -90,7 +90,9 @@ fetch('data/apa.geojson')
       weight: 1,
       fillOpacity: 0.02
     },
-    onEachFeature: (f, l) => l.bindPopup(popupContent(f))
+    onEachFeature: (f, l) => {
+  l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
+}
   }).addTo(map);
 });
 
