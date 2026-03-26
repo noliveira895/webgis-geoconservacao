@@ -1,69 +1,63 @@
 // =======================
-// INICIALIZAÇÃO DO MAPA
+// MAPA
 // =======================
 var map = L.map('map').setView([-22.75, -43.45], 11);
 
-// Basemap clean
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap & Carto'
 }).addTo(map);
 
 // =======================
-// POPUP COM IMAGEM + DADOS
+// PAINEL LATERAL
 // =======================
-function popupContent(feature, latlng) {
+function abrirPainel(feature, latlng) {
   let props = feature.properties;
 
-  let nomeImagem = "";
-
-  if (props.nome) {
-    nomeImagem = props.nome
-      .toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "_");
-  }
+  let nomeImagem = props.nome
+    ? props.nome.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, "_")
+    : "";
 
   let caminhoImagem = `images/${nomeImagem}.jpg`;
 
   let coords = props.coordenadas
-  ? props.coordenadas
-  : (latlng
-      ? `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`
-      : "N/A");
+    ? props.coordenadas
+    : `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
 
-  return `
-    <div style="width:240px">
-      <h4 style="margin:0">${props.nome || "Ponto"}</h4>
+  document.getElementById("panelContent").innerHTML = `
+    <h2>${props.nome || "Ponto"}</h2>
 
-      <img src="${caminhoImagem}" 
-           style="width:100%; border-radius:6px; margin:6px 0;"
-           onerror="this.style.display='none'">
+    <img src="${caminhoImagem}" 
+         onerror="this.style.display='none'">
 
-      <p style="font-size:13px">${props.descricao || ""}</p>
+    <p>${props.descricao || ""}</p>
 
-      <hr style="margin:6px 0">
+    <hr>
 
-      <p style="font-size:12px">
-        <b>📍 Coordenadas:</b><br> ${coords}<br>
-        <b>🪨 Geossítio:</b> ${props.geossit || "N/A"}<br>
-        <b>📊 Valores:</b> ${props.valores || "N/A"}
-      </p>
-    </div>
+    <p><b>📍 Coordenadas:</b><br>${coords}</p>
+    <p><b>🪨 Geossítio:</b> ${props.geossit || "N/A"}</p>
+    <p><b>📊 Valores:</b> ${props.valores || "N/A"}</p>
   `;
+
+  document.getElementById("infoPanel").classList.remove("hidden");
 }
+
+// Fechar painel
+document.getElementById("closePanel").onclick = function () {
+  document.getElementById("infoPanel").classList.add("hidden");
+};
 
 // =======================
 // CAMADAS
 // =======================
 var camadas = {};
 
-// -----------------------
 // PNMNI
-// -----------------------
 fetch('data/pnmni_delimitacao.geojson')
-.then(res => res.json())
+.then(r => r.json())
 .then(data => {
-  camadas["Parque (PNMNI)"] = L.geoJSON(data, {
+  camadas["Parque"] = L.geoJSON(data, {
     style: {
       color: "#2e7d32",
       weight: 2,
@@ -73,16 +67,13 @@ fetch('data/pnmni_delimitacao.geojson')
     interactive: false
   }).addTo(map);
 
-  camadas["Parque (PNMNI)"].bringToBack();
-
-  map.fitBounds(camadas["Parque (PNMNI)"].getBounds());
+  camadas["Parque"].bringToBack();
+  map.fitBounds(camadas["Parque"].getBounds());
 });
 
-// -----------------------
 // APA
-// -----------------------
 fetch('data/apa.geojson')
-.then(res => res.json())
+.then(r => r.json())
 .then(data => {
   camadas["APA"] = L.geoJSON(data, {
     style: {
@@ -96,88 +87,60 @@ fetch('data/apa.geojson')
   camadas["APA"].bringToBack();
 });
 
-// -----------------------
-// Trilhas (Águas)
-// -----------------------
+// Trilhas
 fetch('data/trilhas.geojson')
-.then(res => res.json())
+.then(r => r.json())
 .then(data => {
-  camadas["Trilha das Águas"] = L.geoJSON(data, {
+  camadas["Caminho das Águas"] = L.geoJSON(data, {
     style: {
       color: "#7b1fa2",
       weight: 5,
-      dashArray: "10,6",
-      opacity: 0.9
+      dashArray: "10,6"
     },
-  onEachFeature: (f, l) => {
-  l.bindPopup(`
-    <div style="width:200px">
-      <h4 style="margin:0">Trilha (Caminho das Águas)</h4>
-    </div>
-  `);
-}
+    onEachFeature: (f, l) => {
+      l.bindPopup("<b>Trilha (Caminho das Águas)</b>");
+    }
   }).addTo(map);
-
-  camadas["Trilha das Águas"].bringToFront();
 });
 
-// -----------------------
-// Trilha Contenda
-// -----------------------
+// Contenda
 fetch('data/contenda.geojson')
-.then(res => res.json())
+.then(r => r.json())
 .then(data => {
-  camadas["Trilha Contenda"] = L.geoJSON(data, {
+  camadas["Face Norte - Contenda"] = L.geoJSON(data, {
     style: {
       color: "#fdd835",
       weight: 5,
-      dashArray: "10,6",
-      opacity: 0.9
+      dashArray: "10,6"
     },
     onEachFeature: (f, l) => {
-  l.bindPopup(`
-    <div style="width:200px">
-      <h4 style="margin:0">Trilha (Face Norte - Contenda)</h4>
-    </div>
-  `);
-}
+      l.bindPopup("<b>Trilha (Face Norte - Contenda)</b>");
+    }
   }).addTo(map);
-
-  camadas["Trilha Contenda"].bringToFront();
 });
 
-// -----------------------
 // Pontos
-// -----------------------
 fetch('data/pontos.geojson')
-.then(res => res.json())
+.then(r => r.json())
 .then(data => {
-  camadas["Pontos de Interesse"] = L.geoJSON(data, {
-    pointToLayer: function (feature, latlng) {
-      return L.circleMarker(latlng, {
-        radius: 7,
-        fillColor: "#d32f2f",
-        color: "#000",
-        weight: 1,
-        fillOpacity: 0.9
-      });
-    },
+  camadas["Pontos"] = L.geoJSON(data, {
+    pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+      radius: 7,
+      fillColor: "#d32f2f",
+      color: "#000",
+      weight: 1,
+      fillOpacity: 0.9
+    }),
     onEachFeature: (f, l) => {
-      l.bindPopup(() => popupContent(f, l.getLatLng()));
+      l.on('click', (e) => abrirPainel(f, e.latlng));
     }
   }).addTo(map);
 
-  camadas["Pontos de Interesse"].bringToFront();
+  camadas["Pontos"].bringToFront();
 });
 
-// =======================
-// CONTROLE DE CAMADAS (ROBUSTO)
-// =======================
+// Controle
 setTimeout(() => {
-  var control = L.control.layers(null, camadas, {
-    collapsed: false
-  }).addTo(map);
-
-  document.getElementById("layerControl")
-    .appendChild(control.getContainer());
+  let control = L.control.layers(null, camadas).addTo(map);
+  document.getElementById("layerControl").appendChild(control.getContainer());
 }, 1000);
