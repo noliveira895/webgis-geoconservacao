@@ -85,15 +85,13 @@ fetch('data/apa.geojson')
 .then(res => res.json())
 .then(data => {
   camadas["APA"] = L.geoJSON(data, {
-    style: {
-      color: "#fbc02d",
-      weight: 1,
-      fillOpacity: 0.02
-    },
-    onEachFeature: (f, l) => {
-  l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
-}
-  }).addTo(map);
+  style: {
+    color: "#fbc02d",
+    weight: 1,
+    fillOpacity: 0.02
+  },
+  interactive: false  // 🔥 AQUI
+}).addTo(map);
 });
 
 // -----------------------
