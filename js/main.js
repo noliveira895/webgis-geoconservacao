@@ -135,8 +135,12 @@ fetch('data/contenda.geojson')
       opacity: 0.9
     },
     onEachFeature: (f, l) => {
-      l.bindPopup(() => popupContent(f, l.getLatLng ? l.getLatLng() : null));
-    }
+  l.bindPopup(`
+    <div style="width:200px">
+      <h4 style="margin:0">Trilha (Face Norte - Contenda)</h4>
+    </div>
+  `);
+}
   }).addTo(map);
 
   camadas["Trilha Contenda"].bringToFront();
