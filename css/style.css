@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+#map {
+  height: 100vh;
+}
+
+/* Popup mais bonito */
+.leaflet-popup-content {
+  font-size: 14px;
+}
