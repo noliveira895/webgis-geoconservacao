@@ -66,14 +66,14 @@ fetch('data/pnmni_delimitacao.geojson')
 .then(res => res.json())
 .then(data => {
   camadas["Parque (PNMNI)"] = L.geoJSON(data, {
-    style: {
-      color: "#2e7d32",
-      weight: 2,
-      fillColor: "#66bb6a",
-      fillOpacity: 0.3
-    },
-    onEachFeature: (f, l) => l.bindPopup(popupContent(f))
-  }).addTo(map);
+  style: {
+    color: "#2e7d32",
+    weight: 2,
+    fillColor: "#66bb6a",
+    fillOpacity: 0.3
+  },
+  interactive: false  // 🔥 AQUI
+}).addTo(map);
 
   map.fitBounds(camadas["Parque (PNMNI)"].getBounds());
 });
