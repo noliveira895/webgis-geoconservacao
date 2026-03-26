@@ -25,9 +25,11 @@ function popupContent(feature, latlng) {
 
   let caminhoImagem = `images/${nomeImagem}.jpg`;
 
-  let coords = latlng
-    ? `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`
-    : "N/A";
+  let coords = props.coordenadas
+  ? props.coordenadas
+  : (latlng
+      ? `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`
+      : "N/A");
 
   return `
     <div style="width:240px">
