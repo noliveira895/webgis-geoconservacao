@@ -11,30 +11,45 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 // =======================
 // POPUP COM IMAGEM LOCAL AUTOMÁTICA
 // =======================
-function popupContent(feature) {
+function popupContent(feature, latlng) {
   let props = feature.properties;
 
-  // Gera nome da imagem automaticamente
+  // Nome da imagem automático
   let nomeImagem = "";
 
   if (props.nome) {
     nomeImagem = props.nome
       .toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
-      .replace(/\s+/g, "_"); // espaço → _
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "_");
   }
 
   let caminhoImagem = `images/${nomeImagem}.jpg`;
 
+  // Coordenadas formatadas
+  let coords = latlng
+    ? `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`
+    : "N/A";
+
   return `
-    <div style="width:220px">
+    <div style="width:240px">
+
       <h4 style="margin:0">${props.nome || "Ponto"}</h4>
 
       <img src="${caminhoImagem}" 
-           style="width:100%; border-radius:6px; margin:5px 0;"
+           style="width:100%; border-radius:6px; margin:6px 0;"
            onerror="this.style.display='none'">
 
       <p style="font-size:13px">${props.descricao || ""}</p>
+
+      <hr style="margin:6px 0">
+
+      <p style="font-size:12px">
+        <b>📍 Coordenadas:</b><br> ${coords}<br>
+        <b>🪨 Geossítio:</b> ${props.geossit || "N/A"}<br>
+        <b>📊 Valores:</b> ${props.valores || "N/A"}
+      </p>
+
     </div>
   `;
 }
