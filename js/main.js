@@ -4,9 +4,13 @@
 var map = L.map('map').setView([-22.75, -43.45], 11);
 
 // Basemap clean
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap & Carto'
-}).addTo(map);
+L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution: 'Tiles &copy; Esri',
+    maxZoom: 19
+  }
+).addTo(map);
 
 // =======================
 // POPUP COM IMAGEM + DADOS
